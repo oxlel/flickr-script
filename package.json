@@ -1,0 +1,17 @@
+{
+  "name": "flickr-script",
+  "version": "1.0.0",
+  "description": "A script to extract lat/lon coordinates from flickr photos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Philip Holland",
+  "license": "ISC",
+  "devDependencies": {
+    "flickrapi": "^0.6.0"
+  },
+  "dependencies": {
+    "config": "^1.26.2"
+  }
+}
