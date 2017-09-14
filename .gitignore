@@ -4,6 +4,9 @@ config/local.json
 # Don't commit flickr data folder
 data/
 
+# Don't commit output folder
+output/
+
 ### BELOW FROM https://github.com/github/gitignore/blob/master/Node.gitignore ###
 
 # Logs
