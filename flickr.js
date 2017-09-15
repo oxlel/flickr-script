@@ -75,7 +75,7 @@ function fillGeoData(flickr, callback) {
 }
 
 var duplicates = 0;
-var currentPage = 0;
+var currentPage = 1;
 var segments = [];
 var currentSegment = 0;
 var ids = [];
@@ -110,7 +110,7 @@ function fillPhotoData(flickr, callback) {
                 return;
             }
 
-            if(currentPage == 0) {
+            if(currentPage == 1) {
                 if(parseInt(result.photos.total) > 4000) {
                     logstamp("Too many photos returned (" + parseInt(result.photos.total) + ") - splitting date range");
                     // split the current segment, and push the two new segments to the end of the list
@@ -145,16 +145,16 @@ function fillPhotoData(flickr, callback) {
                 }
             }
 
-            currentPage++;
             logstamp("Found photo data for page #" + currentPage + " of " + result.photos.pages);
-            if(currentPage >= result.photos.pages) {
+            currentPage++;
+            if(currentPage > result.photos.pages) {
                 currentSegment++;
                 if(currentSegment == segments.length) {
                     callback(null);
                     foundAllPhotos = true;
                     return;
                 } else {
-                    currentPage = 0;
+                    currentPage = 1;
                 }
             }
             setTimeout(function () {
