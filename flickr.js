@@ -44,7 +44,7 @@ var currentPhoto = 0;
  * @param m     message to log
  */
 function logstamp(m) {
-    console.log("[" + moment().format("YYYY-MM-DD HH:mm:ss") + "] " + m);
+    console.log("[" + moment().format("YYYY-MM-DD HH:mm:ss") + "]: " + m);
 }
 
 function fillGeoData(flickr, callback) {
@@ -55,11 +55,10 @@ function fillGeoData(flickr, callback) {
     }, function (err, result) {
         if (err) {
             logstamp("ERROR from Flickr API - " + err);
-            logstamp("Skipping this photo")
+            logstamp("Skipping this photo (#" + (currentPhoto+1) + " of " + outputData.length + ")")
         } else {
-            outputData[currentPhoto].y = result.photo.location.latitude;
-            outputData[currentPhoto].x = result.photo.location.longitude;
-            logstamp("Found geospatial data for photo #" + (currentPhoto+1) + " of " + outputData.length);
+            fs.appendFileSync(input.outputFile, photo.id + "," + result.photo.location.longitude + "," + result.photo.location.latitude + "," + photo.url + "\n");    
+            logstamp("Found and written geospatial data for photo #" + (currentPhoto+1) + " of " + outputData.length);
         }
         
         currentPhoto++;
@@ -138,8 +137,6 @@ function fillPhotoData(flickr, callback) {
                 if(ids.indexOf(photo.id) == -1) {
                     ids.push(photo.id);
                     outputData.push({
-                        x: null, 
-                        y: null,
                         url: "https://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + ".jpg",
                         id: photo.id
                     });
@@ -177,18 +174,11 @@ Flickr.tokenOnly(flickrOptions, function (error, flickr) {
         logstamp("Found exactly " + outputData.length + " photos in this range");
         logstamp(duplicates + " duplicate photos will be ignored");
 
+        logstamp("Starting geospatial data retrieval");
+        fs.writeFileSync(input.outputFile, "id,x,y,url\n");
+
         fillGeoData(flickr, function(err) {
             if(err) console.error(err);
-
-            logstamp("Writing output data to file")
-
-            fs.writeFileSync(input.outputFile, "id,x,y,url\n");
-            for(var p in outputData) {
-                var photo = outputData[p];
-                if(photo.x != null && photo.y != null) {
-                    fs.appendFileSync(input.outputFile, photo.id + "," + photo.x + "," + photo.y + "," + photo.url + "\n");    
-                }
-            }
 
             logstamp("Script completed successfully");
             process.exit(0);
